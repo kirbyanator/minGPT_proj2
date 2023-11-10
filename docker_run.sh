@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -it --rm mingpt
+docker run -it -p 8888:8888 --name mingpt mingpt
