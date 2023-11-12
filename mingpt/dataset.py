@@ -4,22 +4,23 @@ from torch.nn import functional as F
 from torch.utils.data import Dataset
 from mingpt.utils import CfgNode as CN
 from transformers import GPT2Tokenizer
+from tqdm import tqdm
 
 class PileDataset(Dataset):
 
-    def __init__(self, data, max_length=1024, collated=False):
+    def __init__(self, data, max_length=1024, collated=True):
         self.max_length = max_length
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.vocab_size = self.tokenizer.vocab_size
 
         if collated == True:
             self.data = []
-            for line in data['text']:
+            for line in tqdm(data):
                 self.data += self.tokenizer.encode(line, max_length=max_length, truncation=True)
                 self.data += [self.tokenizer.eos_token_id]
         else:
             self.data = []
-            for line in data['text']:
+            for line in tqdm(data):
                 self.data.append(self.tokenizer.encode(line, max_length=max_length, truncation=True) + [self.tokenizer.eos_token_id])
 
 

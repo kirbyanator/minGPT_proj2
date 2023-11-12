@@ -11,7 +11,8 @@ args = parser.parse_args()
 path = args.path
 
 data = load_dataset("json", data_files=path)
-data = data['train']
+data = data['train']['text']
+
 
 dataset = PileDataset(data, collated=True)
 
