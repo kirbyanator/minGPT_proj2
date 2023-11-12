@@ -6,3 +6,4 @@ __pycache__/
 .devcontainer/
 dataset.pkl
 minipile.jsonl
+mingpt.sqsh
