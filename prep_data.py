@@ -1,9 +1,16 @@
 from datasets import load_dataset
 from mingpt.dataset import PileDataset
 import pickle
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument("path", help="path for json file")
 
-data = load_dataset("json", data_files="minipile.jsonl")
+args = parser.parse_args()
+
+path = args.path
+
+data = load_dataset("json", data_files=path)
 data = data['train']
 
 dataset = PileDataset(data, collated=True)

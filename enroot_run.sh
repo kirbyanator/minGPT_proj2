@@ -5,7 +5,7 @@ CONTAINER_NAME="min_gpt"
 
 # Check if container already exists using enroot list
 if ! enroot list | grep -q "^${CONTAINER_NAME}\$"; then
-    enroot create --force --name $CONTAINER_NAME ${HOME}/sqsh_files/llama_ft.sqsh
+    enroot create --force --name $CONTAINER_NAME ${HOME}/sqsh_files/min_gpt.sqsh
 fi                
 
 #    --mount ${HOME}/hf_models:/app/hf_models \
