@@ -10,8 +10,6 @@ import torch
 from torch.utils.data.dataloader import DataLoader
 from mingpt.utils import CfgNode as CN
 
-from transformers import GPT2Tokenizer
-
 class Trainer:
 
     @staticmethod
@@ -75,8 +73,6 @@ class Trainer:
             batch_size=config.batch_size,
             num_workers=config.num_workers,
         )
-
-        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 
         model.train()
         self.iter_num = 0
