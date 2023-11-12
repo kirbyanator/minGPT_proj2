@@ -12,5 +12,6 @@ fi
 
 enroot start \
        --mount .:/app \
+       --mount /lustre/scratch/usr/dw87/pile_data_10.jsonl:/app/data
        mingpt \
        bash # the name of the command INSIDE THE CONTAINER that you want to run
