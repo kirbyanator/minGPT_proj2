@@ -93,7 +93,7 @@ def main():
 
     model.eval()
     with torch.no_grad():
-        generate(model, "Davis Forster is a guy who ", num_samples=10, steps=30)
+        generate(model, "Davis Forster is a guy who", num_samples=10, steps=30)
 
 
 
