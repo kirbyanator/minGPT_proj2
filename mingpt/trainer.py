@@ -40,7 +40,6 @@ class Trainer:
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         else:
             self.device = config.device
-        self.device = 'cpu'
         self.model = self.model.to(self.device)
         print("running on device", self.device)
 
@@ -79,7 +78,9 @@ class Trainer:
         self.iter_num = 0
         self.iter_time = time.time()
         data_iter = iter(train_loader)
+        # print(next(data_iter))
         while True:
+            print(f"on iteration {self.iter_num}")
 
             # fetch the next batch (x, y) and re-init iterator if needed
             try:
