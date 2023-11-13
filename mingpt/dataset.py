@@ -6,6 +6,7 @@ from mingpt.utils import CfgNode as CN
 from transformers import GPT2Tokenizer
 from tqdm import tqdm
 import pickle
+import json
 
 class PileDataset(Dataset):
 
@@ -15,8 +16,12 @@ class PileDataset(Dataset):
         with open(json_path, "r") as file:
             data = []
             for line in tqdm(file):
-                data += tokenizer.encode(line, max_length=max_length, truncation=True)
+                text = json.loads(line)['text']
+                # print(f"text is {text}")
+                data += tokenizer.encode(text, max_length=max_length, truncation=True)
                 data += [tokenizer.eos_token_id]
+                # print(tokenizer.decode(data))
+                # exit()
         with open("dataset.pkl", "wb") as f: 
             pickle.dump(data, f)
 
