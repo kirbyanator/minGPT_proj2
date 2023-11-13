@@ -77,6 +77,20 @@ def main():
 
     my_trainer.run()
 
+    loss = my_trainer.loss.item()
+    iter_num = my_trainer.iter_num
+    filepath = "davis_mingpt"+str(iter_num)+".pt"
+    torch.save({
+                'epoch': iter_num,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': my_trainer.optimizer.state_dict(),
+                'loss': loss,
+                'train_config':trainer_config,
+                'model_config':gpt_config
+
+    }, filepath)
+    print("Saving model")
+
     model.eval()
     with torch.no_grad():
         generate(model, "Davis Forster is a guy who ", num_samples=10, steps=30)
