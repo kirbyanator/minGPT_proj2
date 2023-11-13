@@ -7,3 +7,5 @@ __pycache__/
 dataset.pkl
 minipile.jsonl
 mingpt.sqsh
+datasets
+processed_minipile.pkl

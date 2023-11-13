@@ -1,12 +1,22 @@
 from mingpt.dataset import PileDataset
-import pickle
-import argparse
+from datasets import load_dataset
+from transformers import GPT2Tokenizer
 
-parser = argparse.ArgumentParser()
-parser.add_argument("path", help="path for json file")
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 
-args = parser.parse_args()
+dataset = load_dataset("togethercomputer/RedPajama-Data-1T-Sample", 'plain_text', cache_dir='datasets')
+# dataset = load_dataset("json", data_files="minipile.jsonl")
+dataset = dataset['train']
+# print(dataset)
+dataset
 
-path = args.path
+dataset = PileDataset(dataset, max_length=10)
+x, y = dataset[0]
+print(x)
+print(y)
 
-PileDataset.process_json(path)
+print(len(x))
+print(len(y))
+
+print(tokenizer.decode(x.squeeze()))
+print(tokenizer.decode(y.squeeze()))

@@ -5,6 +5,8 @@ from mingpt.model import GPT
 from mingpt.utils import CfgNode as CN
 from transformers import GPT2Tokenizer
 import torch
+from datasets import load_dataset
+
 
 def generate(model, prompt='', num_samples=10, steps=20, do_sample=True):
     device = 'cuda'
@@ -28,23 +30,27 @@ def generate(model, prompt='', num_samples=10, steps=20, do_sample=True):
         print(out)
 
 def main():
-    with open('dataset.pkl', "rb") as dataset_file:
-        data = pickle.load(dataset_file)
-    print(type(data))
-    dataset = PileDataset(data)
+    dataset = load_dataset("togethercomputer/RedPajama-Data-1T-Sample", 'plain_text', cache_dir='datasets')
+    # dataset = load_dataset("json", data_files="minipile.jsonl")
+    dataset = dataset['train']
+    # print(dataset)
+
+    dataset = PileDataset(dataset, max_length=1024)
 
 
     gpt_config = GPT.get_default_config()
 
     gpt_config.vocab_size = dataset.vocab_size
     gpt_config.block_size = 1024
-    gpt_config.model_type = 'gpt-nano'
+    gpt_config.model_type = 'gpt2'
 
     model = GPT(gpt_config)
     model.train()
 
     trainer_config = Trainer.get_default_config()
     trainer_config.max_iters = 500
+    trainer_config.batch_size = 1
+    trainer_config.num_workers = 0
 
     my_trainer = Trainer(trainer_config, model, dataset)
 
@@ -52,7 +58,7 @@ def main():
 
     model.eval()
     with torch.no_grad():
-        generate(model, "Davis Forster is a guy who ", num_samples=1, steps=30)
+        generate(model, "Davis Forster is a guy who ", num_samples=10, steps=30)
 
 
 
