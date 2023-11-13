@@ -29,6 +29,7 @@ def generate(model, prompt='', num_samples=10, steps=20, do_sample=True):
         print('-'*80)
         print(out)
 
+
 def main():
     dataset = load_dataset("togethercomputer/RedPajama-Data-1T-Sample", 'plain_text', cache_dir='datasets')
     # dataset = load_dataset("json", data_files="minipile.jsonl")
@@ -48,11 +49,31 @@ def main():
     model.train()
 
     trainer_config = Trainer.get_default_config()
-    trainer_config.max_iters = 500
+    trainer_config.max_iters = 50000
     trainer_config.batch_size = 1
     trainer_config.num_workers = 0
 
+    def batch_end_callback(trainer):
+        if trainer.iter_num % 1000 == 0 and trainer.iter_num !=0:      
+            print(f"iter_dt {trainer.iter_dt * 1000:.2f}ms; iter {trainer.iter_num}: train loss {trainer.loss.item():.5f}")
+        if trainer.iter_num % 10000 == 0 and trainer.iter_num !=0:
+            loss = trainer.loss.item()
+            iter_num = trainer.iter_num
+            filepath = "davis_mingpt"+str(iter_num)+".pt"
+            torch.save({
+                        'epoch': iter_num,
+                        'model_state_dict': model.state_dict(),
+                        'optimizer_state_dict': trainer.optimizer.state_dict(),
+                        'loss': loss,
+                        'train_config':trainer_config,
+                        'model_config':gpt_config
+
+            }, filepath)
+            print("Saving model")
+
     my_trainer = Trainer(trainer_config, model, dataset)
+
+    my_trainer.set_callback('on_batch_end', batch_end_callback)
 
     my_trainer.run()
 

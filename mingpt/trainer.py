@@ -80,7 +80,8 @@ class Trainer:
         data_iter = iter(train_loader)
         # print(next(data_iter))
         while True:
-            print(f"on iteration {self.iter_num}")
+            if self.iter_num % 100 == 0:
+                print(f"on iteration {self.iter_num}")
 
             # fetch the next batch (x, y) and re-init iterator if needed
             try:
