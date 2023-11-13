@@ -5,27 +5,26 @@ from torch.utils.data import Dataset
 from mingpt.utils import CfgNode as CN
 from transformers import GPT2Tokenizer
 from tqdm import tqdm
-import json
+import pickle
 
 class PileDataset(Dataset):
 
-    def __init__(self, data_path, max_length=1024, collated=True):
+    @staticmethod
+    def process_json(json_path, max_length=1024):
+        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+        with open(json_path, "r") as file:
+            data = []
+            for line in tqdm(file):
+                data += tokenizer.encode(line, max_length=max_length, truncation=True)
+                data += [tokenizer.eos_token_id]
+        with open("dataset.pkl", "wb") as f: 
+            pickle.dump(data, f)
+
+    def __init__(self, data, max_length=1024):
         self.max_length = max_length
         self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.vocab_size = self.tokenizer.vocab_size
-
-        if collated == True:
-            with open(data_path, "r") as file:
-                self.data = []
-                for line in tqdm(file):
-                    self.data += self.tokenizer.encode(line, max_length=max_length, truncation=True)
-                    self.data += [self.tokenizer.eos_token_id]
-        else:
-            with open(data_path, "r") as file:
-                self.data = []
-                for line in tqdm(file):
-                    self.data.append(self.tokenizer.encode(line, max_length=max_length, truncation=True) + [self.tokenizer.eos_token_id])
-
+        self.data = data
 
     def get_vocab_size(self):
         return self.vocab_size

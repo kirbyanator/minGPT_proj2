@@ -9,7 +9,4 @@ args = parser.parse_args()
 
 path = args.path
 
-dataset = PileDataset(path, collated=True)
-
-with open("dataset.pkl", "wb") as f: 
-    pickle.dump(dataset, f)
+PileDataset.process_json(path)

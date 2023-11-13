@@ -40,6 +40,7 @@ class Trainer:
             self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         else:
             self.device = config.device
+        self.device = 'cpu'
         self.model = self.model.to(self.device)
         print("running on device", self.device)
 
