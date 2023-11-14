@@ -23,7 +23,7 @@ class PileDataset(Dataset):
         # grab a chunk of (block_size + 1) characters from the data
         chunk = self.data[idx]['text']
         # encode every character to an integer
-        tokens = self.tokenizer.encode(chunk, add_special_tokens=True, max_length=self.max_length, truncation=True, padding=True)
+        tokens = self.tokenizer.encode(chunk, add_special_tokens=True, max_length=self.max_length, truncation=True, padding="max_length")
         
         # return as tensors
         x = torch.tensor(tokens[:-1], dtype=torch.long)
