@@ -15,8 +15,8 @@ def generate(model, prompt='', num_samples=10, steps=20, do_sample=True):
         # to create unconditional samples...
         # huggingface/transformers tokenizer special cases these strings
         prompt = '<|endoftext|>'
-    encoded_input = tokenizer(prompt, return_tensors='pt').to(device)
-    x = encoded_input['input_ids']
+    # tokenizer.pad_token_id = tokenizer.eos_token
+    x = tokenizer.encode(prompt, return_tensors='pt').to(device)
 
     # we'll process all desired num_samples in a batch, so expand out the batch dim
     x = x.expand(num_samples, -1)
@@ -49,7 +49,7 @@ def main():
     model.train()
 
     trainer_config = Trainer.get_default_config()
-    trainer_config.max_iters = 50000
+    trainer_config.max_iters = 100
     trainer_config.batch_size = 1
     trainer_config.num_workers = 0
 
