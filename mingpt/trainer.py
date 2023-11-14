@@ -62,7 +62,10 @@ class Trainer:
         model, config = self.model, self.config
 
         # setup the optimizer
-        self.optimizer = model.configure_optimizers(config)
+        if config.load_optimizer != None:
+            self.optimizer = config.load_optimizer
+        else:
+            self.optimizer = model.configure_optimizers(config)
 
         # setup the dataloader
         train_loader = DataLoader(

@@ -10,3 +10,8 @@ mingpt.sqsh
 datasets
 processed_minipile.pkl
 checkpoints/davis_*
+build/*
+minGPT.egg-info/
+losses.txt
+output_results.txt
+git_diff.txt

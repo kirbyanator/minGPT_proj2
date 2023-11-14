@@ -6,28 +6,9 @@ from mingpt.utils import CfgNode as CN
 from transformers import GPT2Tokenizer
 import torch
 from datasets import load_dataset
+import os
 
-
-def generate(model, prompt='', num_samples=10, steps=20, do_sample=True):
-    device = 'cuda'
-    tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-    if prompt == '': 
-        # to create unconditional samples...
-        # huggingface/transformers tokenizer special cases these strings
-        prompt = '<|endoftext|>'
-    tokenizer.pad_token = tokenizer.eos_token
-    x = tokenizer.encode(prompt, return_tensors='pt').to(device)
-
-    # we'll process all desired num_samples in a batch, so expand out the batch dim
-    x = x.expand(num_samples, -1)
-
-    # forward the model `steps` times to get samples, in a batch
-    y = model.generate(x, max_new_tokens=steps, do_sample=do_sample, top_k=40)
-
-    for i in range(num_samples):
-        out = tokenizer.decode(y[i].cpu().squeeze())
-        print('-'*80)
-        print(out)
+from inference import generate
 
 
 def main():
@@ -44,15 +25,26 @@ def main():
 
     gpt_config.vocab_size = dataset.vocab_size
     gpt_config.block_size = 1024
-    gpt_config.model_type = 'gpt-nano'
+    gpt_config.model_type = 'gpt2'
+
+    # check for checkpoints
+    checkpoints = os.listdir('./checkpoints')
+    checkpoints.sort()
+    checkpoint = 'checkpoints/' + \
+        checkpoints[-1] if checkpoints else None
 
     model = GPT(gpt_config)
+
     model.train()
 
     trainer_config = Trainer.get_default_config()
     trainer_config.max_iters = 500
     trainer_config.batch_size = 8
     trainer_config.num_workers = 1
+
+    if checkpoint != None:
+        model.load_state_dict(checkpoint.model_state_dict)
+        trainer_config.load_optimizer = checkpoint.opimizer_state_dict
 
     def batch_end_callback(trainer):
         if trainer.iter_num % 1000 == 0 and trainer.iter_num !=0:      
