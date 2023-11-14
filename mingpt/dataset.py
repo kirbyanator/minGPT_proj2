@@ -12,7 +12,6 @@ class PileDataset(Dataset):
     def __init__(self, data, max_length=1024):
         self.data = data
         self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
-        self.tokenizer.pad_token_id = 50256
         self.max_length = max_length
         self.vocab_size = self.tokenizer.vocab_size
 
@@ -21,11 +20,11 @@ class PileDataset(Dataset):
 
     def __getitem__(self, idx):
         # grab a chunk of (block_size + 1) characters from the data
-        chunk = self.data[idx]['text']
-        # encode every character to an integer
-        tokens = self.tokenizer.encode(chunk, add_special_tokens=True, max_length=self.max_length, truncation=True, padding="max_length")
-        
-        # return as tensors
+        text = self.data[idx]['text']
+        # print(f"initial length: {len(text)}")
+        self.tokenizer.pad_token = self.tokenizer.eos_token
+        tokens = self.tokenizer.encode(text, truncation=True, max_length=1024, padding='max_length')
+
         x = torch.tensor(tokens[:-1], dtype=torch.long)
         y = torch.tensor(tokens[1:], dtype=torch.long)
         return x, y

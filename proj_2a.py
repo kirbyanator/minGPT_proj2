@@ -15,7 +15,7 @@ def generate(model, prompt='', num_samples=10, steps=20, do_sample=True):
         # to create unconditional samples...
         # huggingface/transformers tokenizer special cases these strings
         prompt = '<|endoftext|>'
-    # tokenizer.pad_token_id = tokenizer.eos_token
+    tokenizer.pad_token = tokenizer.eos_token
     x = tokenizer.encode(prompt, return_tensors='pt').to(device)
 
     # we'll process all desired num_samples in a batch, so expand out the batch dim
@@ -31,8 +31,9 @@ def generate(model, prompt='', num_samples=10, steps=20, do_sample=True):
 
 
 def main():
-    dataset = load_dataset("togethercomputer/RedPajama-Data-1T-Sample", 'plain_text', cache_dir='datasets')
-    # dataset = load_dataset("json", data_files="minipile.jsonl")
+    # dataset = load_dataset("togethercomputer/RedPajama-Data-1T-Sample", 'plain_text', cache_dir='datasets')
+    # dataset = load_dataset("json", data_files="/lustre/scratch/usr/dw87/pile_data_10.jsonl", cache_dir='pile')
+    dataset = load_dataset("json", data_files="minipile.jsonl")
     dataset = dataset['train']
     # print(dataset)
 
@@ -43,15 +44,15 @@ def main():
 
     gpt_config.vocab_size = dataset.vocab_size
     gpt_config.block_size = 1024
-    gpt_config.model_type = 'gpt2'
+    gpt_config.model_type = 'gpt-nano'
 
     model = GPT(gpt_config)
     model.train()
 
     trainer_config = Trainer.get_default_config()
-    trainer_config.max_iters = 100
-    trainer_config.batch_size = 1
-    trainer_config.num_workers = 0
+    trainer_config.max_iters = 500
+    trainer_config.batch_size = 8
+    trainer_config.num_workers = 1
 
     def batch_end_callback(trainer):
         if trainer.iter_num % 1000 == 0 and trainer.iter_num !=0:      
@@ -59,7 +60,7 @@ def main():
         if trainer.iter_num % 10000 == 0 and trainer.iter_num !=0:
             loss = trainer.loss.item()
             iter_num = trainer.iter_num
-            filepath = "checkpoints/davis_mingpt"+str(iter_num)+".pt"
+            filepath = "checkpoints/davis_mingpt_2"+str(iter_num)+".pt"
             torch.save({
                         'epoch': iter_num,
                         'model_state_dict': model.state_dict(),
@@ -79,7 +80,7 @@ def main():
 
     loss = my_trainer.loss.item()
     iter_num = my_trainer.iter_num
-    filepath = "checkpoints/davis_mingpt"+str(iter_num)+".pt"
+    filepath = "checkpoints/davis_mingpt_2"+str(iter_num)+".pt"
     torch.save({
                 'epoch': iter_num,
                 'model_state_dict': model.state_dict(),
