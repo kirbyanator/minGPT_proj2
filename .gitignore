@@ -9,3 +9,4 @@ minipile.jsonl
 mingpt.sqsh
 datasets
 processed_minipile.pkl
+checkpoints/davis_*

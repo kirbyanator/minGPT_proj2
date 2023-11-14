@@ -59,7 +59,7 @@ def main():
         if trainer.iter_num % 10000 == 0 and trainer.iter_num !=0:
             loss = trainer.loss.item()
             iter_num = trainer.iter_num
-            filepath = "davis_mingpt"+str(iter_num)+".pt"
+            filepath = "checkpoints/davis_mingpt"+str(iter_num)+".pt"
             torch.save({
                         'epoch': iter_num,
                         'model_state_dict': model.state_dict(),
@@ -79,7 +79,7 @@ def main():
 
     loss = my_trainer.loss.item()
     iter_num = my_trainer.iter_num
-    filepath = "davis_mingpt"+str(iter_num)+".pt"
+    filepath = "checkpoints/davis_mingpt"+str(iter_num)+".pt"
     torch.save({
                 'epoch': iter_num,
                 'model_state_dict': model.state_dict(),
