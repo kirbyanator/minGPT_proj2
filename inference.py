@@ -58,9 +58,9 @@ def main():
 
     model.eval()
 
-    prompt = 'I like to play'
+    prompt = 'President Biden said this in a speech on Wednesday:'
 
-    print(generate(model, prompt, steps=100))
+    print(generate(model, prompt, steps=200))
 
 if __name__ == "__main__":
     main()
