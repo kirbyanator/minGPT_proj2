@@ -26,6 +26,8 @@ class Trainer:
         C.betas = (0.9, 0.95)
         C.weight_decay = 0.1 # only applied on matmul weights
         C.grad_norm_clip = 1.0
+        C.load_optimizer = None
+
         return C
 
     def __init__(self, config, model, train_dataset):
@@ -34,6 +36,7 @@ class Trainer:
         self.optimizer = None
         self.train_dataset = train_dataset
         self.callbacks = defaultdict(list)
+        self.losses = []
 
         # determine the device we'll train on
         if config.device == 'auto':
@@ -97,6 +100,7 @@ class Trainer:
 
             # forward the model
             logits, self.loss = model(x, y)
+            self.losses.append(self.loss.item())
 
             # backprop and update the parameters
             model.zero_grad(set_to_none=True)

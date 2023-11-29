@@ -9,7 +9,7 @@ minipile.jsonl
 mingpt.sqsh
 datasets
 processed_minipile.pkl
-checkpoints/davis_*
+checkpoints/*
 build/*
 minGPT.egg-info/
 losses.txt

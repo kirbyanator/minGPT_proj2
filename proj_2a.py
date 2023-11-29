@@ -1,4 +1,3 @@
-import pickle
 from mingpt.dataset import PileDataset
 from mingpt.trainer import Trainer
 from mingpt.model import GPT
